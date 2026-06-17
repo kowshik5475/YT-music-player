@@ -1,0 +1,71 @@
+@media(max-width:1024px){
+
+    .sidebar{
+        width:260px;
+    }
+
+    .player-card img{
+        width:260px;
+        height:260px;
+    }
+}
+
+@media(max-width:768px){
+
+    .container{
+        flex-direction:column;
+    }
+
+    .sidebar{
+        width:100%;
+        border-right:none;
+        border-bottom:1px solid #334155;
+    }
+
+    .header{
+        flex-direction:column;
+        gap:15px;
+    }
+
+    .search-box input{
+        width:100%;
+    }
+
+    .player-card{
+        padding:20px;
+    }
+
+    .player-card img{
+        width:220px;
+        height:220px;
+    }
+
+    .controls{
+        flex-wrap:wrap;
+    }
+
+    .volume-wrapper input{
+        width:150px;
+    }
+}
+
+@media(max-width:480px){
+
+    .progress-wrapper{
+        flex-direction:column;
+    }
+
+    .controls button{
+        width:48px;
+        height:48px;
+    }
+
+    .player-card img{
+        width:180px;
+        height:180px;
+    }
+
+    .song-info h2{
+        font-size:1.2rem;
+    }
+}
