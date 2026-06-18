@@ -15,9 +15,9 @@ function initializeSearch() {
             } else {
                 searchTypeToggle.classList.remove("yt-mode");
                 searchTypeToggle.title = "Switch to YouTube search";
-                input.placeholder = "Search playlist...";
+                input.placeholder = "Search library...";
                 closeSearchResults();
-                filterLocalPlaylist("");
+                filterLocalLibrary("");
             }
         });
     }
@@ -28,9 +28,8 @@ function initializeSearch() {
     input.addEventListener("keyup", (e) => {
         clearTimeout(debounceTimer);
         const query = input.value.trim();
-
         if (searchType === "local") {
-            filterLocalPlaylist(query);
+            filterLocalLibrary(query);
         } else {
             if (e.key === "Enter" && query.length > 1) {
                 runYouTubeSearch(query);
@@ -48,16 +47,22 @@ function initializeSearch() {
         if (e.key === "Escape") {
             input.value = "";
             closeSearchResults();
-            filterLocalPlaylist("");
+            filterLocalLibrary("");
         }
     });
 }
 
-function filterLocalPlaylist(query) {
+function filterLocalLibrary(query) {
     closeSearchResults();
-    const items = document.querySelectorAll("#playlist .song-item");
+    // Filter library list
+    const items = document.querySelectorAll("#libraryList .song-item");
     const q = query.toLowerCase();
     items.forEach(li => {
+        const text = li.textContent.toLowerCase();
+        li.style.display = (!q || text.includes(q)) ? "" : "none";
+    });
+    // Also filter playlist detail songs if open
+    document.querySelectorAll(".pl-detail-songs .song-item").forEach(li => {
         const text = li.textContent.toLowerCase();
         li.style.display = (!q || text.includes(q)) ? "" : "none";
     });
@@ -67,7 +72,6 @@ async function runYouTubeSearch(query) {
     const panel = getOrCreateSearchPanel();
     panel.innerHTML = `<div class="search-loading"><i class="fa-solid fa-spinner fa-spin"></i> Searching YouTube...</div>`;
     panel.style.display = "block";
-
     const results = await searchYouTube(query);
     renderSearchResults(results, panel);
 }
@@ -90,6 +94,7 @@ function renderSearchResults(results, panel) {
 
     const list = document.createElement("ul");
     list.className = "search-results-list";
+
     results.forEach(song => {
         const li = document.createElement("li");
         li.className = "search-result-item";
@@ -100,32 +105,43 @@ function renderSearchResults(results, panel) {
                 <small>${escapeHtml(song.artist)}</small>
             </div>
             <div class="search-result-actions">
-                <button class="play-now-btn" title="Play now"><i class="fa-solid fa-play"></i></button>
-                <button class="add-to-pl-btn" title="Add to playlist"><i class="fa-solid fa-plus"></i></button>
+                <button class="play-now-btn" title="Add to library & play"><i class="fa-solid fa-play"></i></button>
+                <button class="add-to-pl-btn" title="Add to library"><i class="fa-solid fa-plus"></i></button>
             </div>
         `;
+
+        // Play now: add to library, add to active playlist, play
         li.querySelector(".play-now-btn").addEventListener("click", () => {
-            StorageManager.addSongToPlaylist(activePlaylistId, song);
+            StorageManager.addToLibrary(song);
+            StorageManager.addSongToPlaylist(activePlaylistId, song.videoId);
             loadActivePlaylist();
             const idx = playlist.findIndex(s => s.videoId === song.videoId);
-            renderPlaylist();
+            renderAll();
             if (idx !== -1) loadSong(idx);
         });
+
+        // Add to library only
         li.querySelector(".add-to-pl-btn").addEventListener("click", (e) => {
             const btn = e.currentTarget;
-            const added = StorageManager.addSongToPlaylist(activePlaylistId, song);
+            StorageManager.addToLibrary(song);
+            StorageManager.addSongToPlaylist(activePlaylistId, song.videoId);
             loadActivePlaylist();
-            renderPlaylist();
+            renderAll();
             btn.innerHTML = '<i class="fa-solid fa-check"></i>';
             btn.style.background = "#22c55e";
-            btn.title = added ? "Added!" : "Already in playlist";
+            btn.style.borderColor = "#22c55e";
+            btn.title = "Added!";
             setTimeout(() => {
                 btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
                 btn.style.background = "";
+                btn.style.borderColor = "";
+                btn.title = "Add to library";
             }, 1500);
         });
+
         list.appendChild(li);
     });
+
     panel.appendChild(list);
 }
 

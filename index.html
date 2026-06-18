@@ -27,7 +27,7 @@
         <button id="searchTypeToggle" title="Switch to YouTube search" class="search-mode-btn">
             <i class="fa-solid fa-magnifying-glass"></i>
         </button>
-        <input type="text" id="searchInput" placeholder="Search playlist...">
+        <input type="text" id="searchInput" placeholder="Search library...">
     </div>
 
     <div class="header-actions">
@@ -43,15 +43,15 @@
     <!-- ── SIDEBAR ── -->
     <aside class="sidebar" id="sidebar">
 
-        <!-- Sidebar Tab Bar -->
+        <!-- Tab Bar -->
         <nav class="sidebar-tabs">
             <button class="stab active" data-tab="playlists" title="Playlists">
                 <i class="fa-solid fa-layer-group"></i>
                 <span>Playlists</span>
             </button>
-            <button class="stab" data-tab="songs" title="Songs">
+            <button class="stab" data-tab="songs" title="Library">
                 <i class="fa-solid fa-music"></i>
-                <span>Songs</span>
+                <span>Library</span>
             </button>
             <button class="stab" data-tab="favorites" title="Favorites">
                 <i class="fa-solid fa-heart"></i>
@@ -77,12 +77,12 @@
                 <div id="playlistsNav"></div>
             </div>
 
-            <!-- SONGS panel -->
+            <!-- LIBRARY (Songs) panel -->
             <div class="tab-panel" id="tab-songs">
                 <div class="panel-header">
-                    <span class="panel-title" id="currentPlaylistLabel">My Playlist</span>
+                    <span class="panel-title">Library <span id="libCountBadge" class="count-badge">0</span></span>
                 </div>
-                <ul id="playlist"></ul>
+                <ul id="libraryList"></ul>
             </div>
 
             <!-- FAVORITES panel -->
@@ -104,7 +104,7 @@
         </div>
     </aside>
 
-    <!-- ── SIDEBAR OVERLAY (mobile) ── -->
+    <!-- ── OVERLAY (mobile) ── -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- ── PLAYER ── -->
@@ -159,6 +159,43 @@
         </div>
     </main>
 
+</div>
+
+<!-- ── CREATE PLAYLIST MODAL ── -->
+<div class="modal-overlay" id="createPlaylistModal" aria-hidden="true">
+    <div class="modal-box" role="dialog" aria-label="Create Playlist">
+
+        <div class="modal-header">
+            <div class="modal-icon"><i class="fa-solid fa-circle-plus"></i></div>
+            <div>
+                <h3 class="modal-title">New Playlist</h3>
+                <p class="modal-subtitle">Organise your favourite tracks</p>
+            </div>
+            <button class="modal-close-btn" id="closeCreateModal" title="Cancel">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <div class="modal-field">
+                <label for="plNameInput">Playlist name <span class="required">*</span></label>
+                <input type="text" id="plNameInput" placeholder="e.g. Chill Vibes" maxlength="60" autocomplete="off">
+                <span class="field-hint" id="plNameHint"></span>
+            </div>
+            <div class="modal-field">
+                <label for="plDescInput">Description <span class="optional">(optional)</span></label>
+                <textarea id="plDescInput" placeholder="What's this playlist about?" rows="2" maxlength="200"></textarea>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-secondary" id="cancelCreatePlaylist">Cancel</button>
+            <button class="btn-primary" id="confirmCreatePlaylist">
+                <i class="fa-solid fa-plus"></i> Create Playlist
+            </button>
+        </div>
+
+    </div>
 </div>
 
 <script src="js/storage.js"></script>
