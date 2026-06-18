@@ -4,24 +4,25 @@ window.addEventListener(
     "load",
     () => {
 
-    initializeTheme();
+        initializeTheme();
 
-    initializeSearch();
+        initializeSearch();
 
-    initializeButtons();
-});
+        initializeButtons();
+    }
+);
 
 function initializeTheme() {
 
     const theme =
         StorageManager.getTheme();
 
-    if(theme === "light"){
+    if (theme === "light") {
 
         document.body
-        .classList.add(
-            "light"
-        );
+            .classList.add(
+                "light"
+            );
     }
 }
 
@@ -81,52 +82,54 @@ function initializeButtons() {
         "click",
         () => {
 
-        shuffleMode =
-            !shuffleMode;
+            shuffleMode =
+                !shuffleMode;
 
-        shuffleBtn.style.opacity =
-            shuffleMode
-            ? "1"
-            : ".5";
-    });
+            shuffleBtn.style.opacity =
+                shuffleMode
+                    ? "1"
+                    : ".5";
+        }
+    );
 
     repeatBtn.addEventListener(
         "click",
         () => {
 
-        if(
-            repeatMode ===
-            "off"
-        ){
+            if (
+                repeatMode ===
+                "off"
+            ) {
 
-            repeatMode =
-            "one";
+                repeatMode =
+                    "one";
 
-            repeatBtn.innerHTML =
-            '<i class="fa-solid fa-repeat"></i> 1';
+                repeatBtn.innerHTML =
+                    '<i class="fa-solid fa-repeat"></i> 1';
 
+            }
+            else if (
+                repeatMode ===
+                "one"
+            ) {
+
+                repeatMode =
+                    "all";
+
+                repeatBtn.innerHTML =
+                    '<i class="fa-solid fa-repeat"></i> All';
+
+            }
+            else {
+
+                repeatMode =
+                    "off";
+
+                repeatBtn.innerHTML =
+                    '<i class="fa-solid fa-repeat"></i>';
+            }
         }
-        else if(
-            repeatMode ===
-            "one"
-        ){
-
-            repeatMode =
-            "all";
-
-            repeatBtn.innerHTML =
-            '<i class="fa-solid fa-repeat"></i> All';
-
-        }
-        else{
-
-            repeatMode =
-            "off";
-
-            repeatBtn.innerHTML =
-            '<i class="fa-solid fa-repeat"></i>';
-        }
-    });
+    );
 
     favoriteBtn.addEventListener(
         "click",
@@ -144,43 +147,81 @@ function toggleFavorite() {
     const song =
         playlist[currentIndex];
 
-    if(
+    if (
         StorageManager
-        .isFavorite(
-            song.videoId
-        )
-    ){
+            .isFavorite(
+                song.videoId
+            )
+    ) {
 
         StorageManager
-        .removeFavorite(
-            song.videoId
-        );
+            .removeFavorite(
+                song.videoId
+            );
 
-    }else{
+    } else {
 
         StorageManager
-        .addFavorite(
-            song
-        );
+            .addFavorite(
+                song
+            );
     }
 
     renderFavorites();
+
+    updateFavoriteButton();
+}
+
+function updateFavoriteButton() {
+
+    const song =
+        playlist[currentIndex];
+
+    const btn =
+        document.getElementById(
+            "favoriteBtn"
+        );
+
+    const icon =
+        btn.querySelector("i");
+
+    if (
+        StorageManager
+            .isFavorite(
+                song.videoId
+            )
+    ) {
+
+        icon.className =
+            "fa-solid fa-heart";
+
+        btn.style.background =
+            "#ef4444";
+
+    } else {
+
+        icon.className =
+            "fa-regular fa-heart";
+
+        btn.style.background =
+            "var(--accent)";
+    }
 }
 
 function toggleTheme() {
 
     document.body
-    .classList.toggle(
-        "light"
-    );
+        .classList.toggle(
+            "light"
+        );
 
     const currentTheme =
         document.body
-        .classList.contains(
-            "light"
-        )
-        ? "light"
-        : "dark";
+            .classList.contains(
+                "light"
+            )
+            ? "light"
+            : "dark";
 
     StorageManager
         .saveTheme(
