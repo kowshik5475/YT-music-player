@@ -11,28 +11,27 @@ function onYouTubeIframeAPIReady() {
     player = new YT.Player(
         "player",
         {
+            height: "0",
+            width: "0",
 
-        height: "0",
-        width: "0",
+            videoId:
+                playlist[currentIndex]
+                    .videoId,
 
-        videoId:
-        playlist[currentIndex]
-        .videoId,
+            playerVars: {
+                autoplay: 0
+            },
 
-        playerVars: {
-            autoplay: 0
-        },
+            events: {
 
-        events: {
+                onReady:
+                    onPlayerReady,
 
-            onReady:
-            onPlayerReady,
-
-            onStateChange:
-            onPlayerStateChange
+                onStateChange:
+                    onPlayerStateChange
+            }
         }
-
-    });
+    );
 }
 
 function onPlayerReady() {
@@ -71,7 +70,6 @@ function onPlayerStateChange(
         } else {
 
             nextSong();
-
         }
     }
 }
@@ -101,6 +99,14 @@ function updateSongUI() {
         )
         .src =
         song.cover;
+
+    if (
+        typeof updateFavoriteButton ===
+        "function"
+    ) {
+
+        updateFavoriteButton();
+    }
 }
 
 function loadSong(index) {
@@ -127,18 +133,20 @@ function nextSong() {
     if (shuffleMode) {
 
         currentIndex =
-        Math.floor(
-            Math.random()
-            *
-            playlist.length
-        );
+            Math.floor(
+                Math.random()
+                *
+                playlist.length
+            );
 
     } else {
 
         currentIndex =
-        (currentIndex + 1)
-        %
-        playlist.length;
+            (
+                currentIndex + 1
+            )
+            %
+            playlist.length;
     }
 
     loadSong(
@@ -155,7 +163,7 @@ function previousSong() {
     ) {
 
         currentIndex =
-        playlist.length - 1;
+            playlist.length - 1;
     }
 
     loadSong(
@@ -170,9 +178,9 @@ function togglePlay() {
 
     const btn =
         document
-        .getElementById(
-            "playBtn"
-        );
+            .getElementById(
+                "playBtn"
+            );
 
     if (
         state ===
@@ -182,14 +190,14 @@ function togglePlay() {
         player.pauseVideo();
 
         btn.innerHTML =
-        '<i class="fa-solid fa-play"></i>';
+            '<i class="fa-solid fa-play"></i>';
 
     } else {
 
         player.playVideo();
 
         btn.innerHTML =
-        '<i class="fa-solid fa-pause"></i>';
+            '<i class="fa-solid fa-pause"></i>';
     }
 }
 
@@ -206,117 +214,123 @@ function updateProgressBar() {
     const current =
         player.getCurrentTime();
 
-    if (duration > 0) {
+    if (
+        duration > 0
+    ) {
 
         const progress =
-        (
-            current /
-            duration
-        ) * 100;
+            (
+                current /
+                duration
+            ) * 100;
 
         document
-        .getElementById(
-            "progressBar"
-        )
-        .value =
-        progress;
+            .getElementById(
+                "progressBar"
+            )
+            .value =
+            progress;
 
         document
-        .getElementById(
-            "currentTime"
-        )
-        .textContent =
-        formatTime(current);
+            .getElementById(
+                "currentTime"
+            )
+            .textContent =
+            formatTime(
+                current
+            );
 
         document
-        .getElementById(
-            "duration"
-        )
-        .textContent =
-        formatTime(duration);
+            .getElementById(
+                "duration"
+            )
+            .textContent =
+            formatTime(
+                duration
+            );
     }
 }
 
-function formatTime(seconds){
+function formatTime(seconds) {
 
     const mins =
-        Math.floor(seconds / 60);
+        Math.floor(
+            seconds / 60
+        );
 
     const secs =
-        Math.floor(seconds % 60);
+        Math.floor(
+            seconds % 60
+        );
 
     return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
 }
 
 document.addEventListener(
-"keydown",
-event => {
+    "keydown",
+    event => {
 
-if (
-event.code === "Space"
-){
+        if (
+            event.code ===
+            "Space"
+        ) {
 
-event.preventDefault();
+            event.preventDefault();
 
-togglePlay();
+            togglePlay();
+        }
 
-}
+        if (
+            event.key ===
+            "ArrowRight"
+        ) {
 
-if (
-event.key ===
-"ArrowRight"
-){
+            nextSong();
+        }
 
-nextSong();
+        if (
+            event.key ===
+            "ArrowLeft"
+        ) {
 
-}
-
-if (
-event.key ===
-"ArrowLeft"
-){
-
-previousSong();
-
-}
-});
-
-document
-.getElementById(
-"progressBar"
-)
-.addEventListener(
-"input",
-function(){
-
-const seekTime =
-(
-this.value
-/
-100
-)
-*
-player.getDuration();
-
-player.seekTo(
-seekTime,
-true
-);
-
-}
+            previousSong();
+        }
+    }
 );
 
 document
-.getElementById(
-"volumeSlider"
-)
-.addEventListener(
-"input",
-function(){
+    .getElementById(
+        "progressBar"
+    )
+    .addEventListener(
+        "input",
+        function () {
 
-player.setVolume(
-this.value
-);
+            const seekTime =
+                (
+                    this.value /
+                    100
+                )
+                *
+                player.getDuration();
 
-}
-);
+            player.seekTo(
+                seekTime,
+                true
+            );
+        }
+    );
+
+document
+    .getElementById(
+        "volumeSlider"
+    )
+    .addEventListener(
+        "input",
+        function () {
+
+            player.setVolume(
+                this.value
+            );
+        }
+    );
