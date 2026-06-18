@@ -478,14 +478,25 @@ body {
     text-align:center;
     box-shadow:var(--shadow);
 }
-.cover-wrapper { display:inline-block; margin-bottom:20px; }
+.cover-wrapper { display:inline-block; margin-bottom:20px; position:relative; }
 .cover-wrapper img {
     width:260px; height:260px;
     object-fit:cover; border-radius:18px; display:block;
     box-shadow:0 12px 40px rgba(0,0,0,.35);
-    transition:transform .3s;
+    transition:transform .3s, opacity .3s;
+    background: var(--card2);
 }
 .cover-wrapper:hover img { transform:scale(1.02); }
+
+/* Shimmer while cover loads */
+.cover-wrapper img:not([src]), .cover-wrapper img[src=""] {
+    opacity: 0;
+}
+
+/* Song thumb skeleton */
+.song-thumb {
+    background: var(--card2);
+}
 .song-info h2 { font-size:1.15rem; font-weight:700; margin-bottom:5px; letter-spacing:-.3px; }
 .song-info p  { color:var(--text-muted); font-size:.88rem; }
 

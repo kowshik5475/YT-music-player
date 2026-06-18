@@ -99,7 +99,7 @@ function renderSearchResults(results, panel) {
         const li = document.createElement("li");
         li.className = "search-result-item";
         li.innerHTML = `
-            <img src="${song.cover}" alt="" class="song-thumb" onerror="this.src='https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100'">
+            <img src="${song.cover}" alt="" class="song-thumb" loading="lazy" decoding="async" onerror="this.src='https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=80&q=60'">
             <div class="search-result-info">
                 <strong>${escapeHtml(song.title)}</strong>
                 <small>${escapeHtml(song.artist)}</small>

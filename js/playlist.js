@@ -52,13 +52,13 @@ function renderPlaylistList() {
     Object.values(pls).forEach(pl => {
         const songs   = StorageManager.getPlaylistSongs(pl.id);
         const cover   = songs.length ? songs[0].cover
-                       : "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400";
+                       : "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=80&q=60";
         const isActive = pl.id === actId;
 
         const card = document.createElement("div");
         card.className = "pl-card" + (isActive ? " active" : "");
         card.innerHTML = `
-            <div class="pl-card-cover" style="background-image:url('${cover}')">
+            <div class="pl-card-cover" style="background-image:url('${encodeURI(cover)}')">
                 <div class="pl-card-overlay">
                     <button class="pl-play-btn" title="Play playlist" data-id="${pl.id}">
                         <i class="fa-solid fa-play"></i>
@@ -191,7 +191,7 @@ function renderPlaylistDetail(id) {
             li.className = "song-item" + (isActive && idx === currentIndex ? " active-song" : "");
             li.innerHTML = `
                 <div class="song-item-info" data-index="${idx}">
-                    <img src="${song.cover}" alt="" class="song-thumb" onerror="this.src='https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100'">
+                    <img src="${song.cover}" alt="" class="song-thumb" loading="lazy" decoding="async" onerror="this.src='https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=80&q=60'">
                     <div>
                         <strong>${escapeHtml(song.title)}</strong>
                         <small>${escapeHtml(song.artist)}</small>

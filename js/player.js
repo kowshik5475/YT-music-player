@@ -86,7 +86,7 @@ function onPlaylistSwitch() {
         player.cueVideoById(playlist[0].videoId);
     }
     updateSongUI();
-    renderPlaylist();
+    renderAll();
     const btn = document.getElementById("playBtn");
     if (btn) btn.innerHTML = '<i class="fa-solid fa-play"></i>';
 }
@@ -97,9 +97,10 @@ function updateSongUI() {
     document.getElementById("songTitle").textContent = song.title;
     document.getElementById("artistName").textContent = song.artist;
     const cover = document.getElementById("coverImage");
-    cover.src = song.cover;
+    // Upscale Unsplash thumbnails for the player card display
+    cover.src = (song.cover || "").replace(/([?&]w=)\d+/, "$1400").replace(/([?&]q=)\d+/, "$180");
     cover.onerror = () => {
-        cover.src = "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800";
+        cover.src = "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&q=80";
     };
     document.title = song.title + " — YT Music";
     if (typeof updateFavoriteButton === "function") updateFavoriteButton();
