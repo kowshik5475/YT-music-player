@@ -11,10 +11,16 @@
 </head>
 <body>
 
+<!-- ── HEADER ── -->
 <header class="header">
-    <div class="logo">
-        <i class="fa-solid fa-music"></i>
-        <h2>YT Music</h2>
+    <div class="header-left">
+        <button id="sidebarToggle" class="sidebar-toggle-btn" title="Toggle sidebar">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="logo">
+            <i class="fa-solid fa-music"></i>
+            <h2>YT Music</h2>
+        </div>
     </div>
 
     <div class="search-box">
@@ -31,43 +37,77 @@
     </div>
 </header>
 
-<div class="container">
+<!-- ── LAYOUT ── -->
+<div class="app-layout">
 
-    <aside class="sidebar">
+    <!-- ── SIDEBAR ── -->
+    <aside class="sidebar" id="sidebar">
 
-        <section class="playlists-nav-section">
-            <div class="section-title">
-                <h3><i class="fa-solid fa-layer-group"></i> Playlists</h3>
-                <button id="createPlaylistBtn" title="New playlist" class="icon-action-btn">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
+        <!-- Sidebar Tab Bar -->
+        <nav class="sidebar-tabs">
+            <button class="stab active" data-tab="playlists" title="Playlists">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>Playlists</span>
+            </button>
+            <button class="stab" data-tab="songs" title="Songs">
+                <i class="fa-solid fa-music"></i>
+                <span>Songs</span>
+            </button>
+            <button class="stab" data-tab="favorites" title="Favorites">
+                <i class="fa-solid fa-heart"></i>
+                <span>Favorites</span>
+            </button>
+            <button class="stab" data-tab="recent" title="Recently Played">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>Recent</span>
+            </button>
+        </nav>
+
+        <!-- Tab Panels -->
+        <div class="sidebar-content">
+
+            <!-- PLAYLISTS panel -->
+            <div class="tab-panel active" id="tab-playlists">
+                <div class="panel-header">
+                    <span class="panel-title">My Playlists</span>
+                    <button id="createPlaylistBtn" class="icon-action-btn" title="New playlist">
+                        <i class="fa-solid fa-plus"></i> New
+                    </button>
+                </div>
+                <div id="playlistsNav"></div>
             </div>
-            <div id="playlistsNav"></div>
-        </section>
 
-        <section class="playlist-section">
-            <div class="section-title">
-                <h3 id="currentPlaylistLabel"><i class="fa-solid fa-music"></i> Songs</h3>
+            <!-- SONGS panel -->
+            <div class="tab-panel" id="tab-songs">
+                <div class="panel-header">
+                    <span class="panel-title" id="currentPlaylistLabel">My Playlist</span>
+                </div>
+                <ul id="playlist"></ul>
             </div>
-            <ul id="playlist"></ul>
-        </section>
 
-        <section class="favorites-section">
-            <div class="section-title">
-                <h3><i class="fa-solid fa-heart"></i> Favorites</h3>
+            <!-- FAVORITES panel -->
+            <div class="tab-panel" id="tab-favorites">
+                <div class="panel-header">
+                    <span class="panel-title">Favorites</span>
+                </div>
+                <ul id="favoritesList"></ul>
             </div>
-            <ul id="favoritesList"></ul>
-        </section>
 
-        <section class="recent-section">
-            <div class="section-title">
-                <h3><i class="fa-solid fa-clock-rotate-left"></i> Recently Played</h3>
+            <!-- RECENTLY PLAYED panel -->
+            <div class="tab-panel" id="tab-recent">
+                <div class="panel-header">
+                    <span class="panel-title">Recently Played</span>
+                </div>
+                <ul id="recentList"></ul>
             </div>
-            <ul id="recentList"></ul>
-        </section>
 
+        </div>
     </aside>
 
+    <!-- ── SIDEBAR OVERLAY (mobile) ── -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ── PLAYER ── -->
     <main class="player-container">
         <div class="player-card">
 
@@ -75,7 +115,6 @@
                 <img id="coverImage"
                     src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800"
                     alt="Cover">
-                <div class="cover-overlay"></div>
             </div>
 
             <div class="song-info">

@@ -1,42 +1,49 @@
-@media (max-width: 1024px) {
-    .sidebar { width: 260px; }
-    .cover-wrapper img { width: 240px; height: 240px; }
+/* ── Responsive ────────────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+    :root { --sidebar-w: 260px; }
+    .cover-wrapper img { width: 230px; height: 230px; }
 }
 
-@media (max-width: 768px) {
-    .container { flex-direction: column; }
+/* On mobile the sidebar slides over the content */
+@media (max-width: 680px) {
+    :root { --sidebar-w: 82vw; }
 
     .sidebar {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-        max-height: 40vh;
-        overflow-y: auto;
+        position: fixed;
+        top: var(--header-h);
+        left: 0;
+        height: calc(100vh - var(--header-h));
+        z-index: 150;
+        transform: translateX(-100%);
+        width: var(--sidebar-w) !important; /* always full mobile width */
     }
 
-    .header { flex-wrap: wrap; gap: 12px; padding: 14px 16px; }
+    /* open state driven by JS adding .open */
+    .sidebar.open {
+        transform: translateX(0);
+    }
 
-    .search-box { max-width: 100%; flex: 1 1 100%; margin: 0; order: 3; }
+    /* hide collapsed logic on mobile — use open/closed instead */
+    .sidebar.collapsed {
+        width: var(--sidebar-w) !important;
+        transform: translateX(-100%);
+    }
 
-    .player-container { padding: 16px; }
-
-    .player-card { padding: 20px 16px; }
-
+    .player-container { padding: 16px 12px; }
     .cover-wrapper img { width: 200px; height: 200px; }
 
-    .controls { gap: 8px; flex-wrap: wrap; }
+    .controls gap { gap: 8px; }
+    .controls button { width: 42px; height: 42px; }
+    .play-btn-main { width: 52px !important; height: 52px !important; }
 
+    .search-box { max-width: 100%; }
     .volume-wrapper input { width: 140px; }
 }
 
-@media (max-width: 480px) {
-    .cover-wrapper img { width: 160px; height: 160px; }
-
-    .controls button { width: 42px; height: 42px; font-size: 14px; }
-    .play-btn-main { width: 54px !important; height: 54px !important; }
-
+@media (max-width: 420px) {
+    .cover-wrapper img { width: 170px; height: 170px; }
     .song-info h2 { font-size: 1rem; }
-
-    .progress-wrapper { flex-wrap: wrap; }
-    .progress-wrapper input { flex: 1 1 100%; order: -1; }
+    .controls { flex-wrap: wrap; }
+    .logo h2 { display: none; }
 }
