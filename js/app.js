@@ -1,230 +1,99 @@
 // app.js
 
-window.addEventListener(
-    "load",
-    () => {
-
-        initializeTheme();
-
-        initializeSearch();
-
-        initializeButtons();
-    }
-);
+window.addEventListener("load", () => {
+    initializeTheme();
+    initializeSearch();
+    initializeButtons();
+    initializePlaylistManager();
+});
 
 function initializeTheme() {
-
-    const theme =
-        StorageManager.getTheme();
-
+    const theme = StorageManager.getTheme();
     if (theme === "light") {
-
-        document.body
-            .classList.add(
-                "light"
-            );
+        document.body.classList.add("light");
     }
+    updateThemeIcon();
+}
+
+function updateThemeIcon() {
+    const btn = document.getElementById("themeBtn");
+    if (!btn) return;
+    const isLight = document.body.classList.contains("light");
+    btn.innerHTML = isLight
+        ? '<i class="fa-solid fa-sun"></i>'
+        : '<i class="fa-solid fa-moon"></i>';
+    btn.title = isLight ? "Switch to Dark Mode" : "Switch to Light Mode";
 }
 
 function initializeButtons() {
+    document.getElementById("playBtn").addEventListener("click", togglePlay);
+    document.getElementById("nextBtn").addEventListener("click", nextSong);
+    document.getElementById("prevBtn").addEventListener("click", previousSong);
 
-    const playBtn =
-        document.getElementById(
-            "playBtn"
-        );
+    const shuffleBtn = document.getElementById("shuffleBtn");
+    shuffleBtn.addEventListener("click", () => {
+        shuffleMode = !shuffleMode;
+        StorageManager.saveShuffleMode(shuffleMode);
+        shuffleBtn.classList.toggle("active-toggle", shuffleMode);
+        shuffleBtn.title = shuffleMode ? "Shuffle: On" : "Shuffle: Off";
+    });
 
-    const nextBtn =
-        document.getElementById(
-            "nextBtn"
-        );
-
-    const prevBtn =
-        document.getElementById(
-            "prevBtn"
-        );
-
-    const shuffleBtn =
-        document.getElementById(
-            "shuffleBtn"
-        );
-
-    const repeatBtn =
-        document.getElementById(
-            "repeatBtn"
-        );
-
-    const favoriteBtn =
-        document.getElementById(
-            "favoriteBtn"
-        );
-
-    const themeBtn =
-        document.getElementById(
-            "themeBtn"
-        );
-
-    playBtn.addEventListener(
-        "click",
-        togglePlay
-    );
-
-    nextBtn.addEventListener(
-        "click",
-        nextSong
-    );
-
-    prevBtn.addEventListener(
-        "click",
-        previousSong
-    );
-
-    shuffleBtn.addEventListener(
-        "click",
-        () => {
-
-            shuffleMode =
-                !shuffleMode;
-
-            shuffleBtn.style.opacity =
-                shuffleMode
-                    ? "1"
-                    : ".5";
+    const repeatBtn = document.getElementById("repeatBtn");
+    repeatBtn.addEventListener("click", () => {
+        if (repeatMode === "off") {
+            repeatMode = "one";
+        } else if (repeatMode === "one") {
+            repeatMode = "all";
+        } else {
+            repeatMode = "off";
         }
-    );
+        StorageManager.saveRepeatMode(repeatMode);
+        syncToggleStates();
+    });
 
-    repeatBtn.addEventListener(
-        "click",
-        () => {
+    document.getElementById("favoriteBtn").addEventListener("click", toggleFavorite);
+    document.getElementById("themeBtn").addEventListener("click", toggleTheme);
+}
 
-            if (
-                repeatMode ===
-                "off"
-            ) {
-
-                repeatMode =
-                    "one";
-
-                repeatBtn.innerHTML =
-                    '<i class="fa-solid fa-repeat"></i> 1';
-
-            }
-            else if (
-                repeatMode ===
-                "one"
-            ) {
-
-                repeatMode =
-                    "all";
-
-                repeatBtn.innerHTML =
-                    '<i class="fa-solid fa-repeat"></i> All';
-
-            }
-            else {
-
-                repeatMode =
-                    "off";
-
-                repeatBtn.innerHTML =
-                    '<i class="fa-solid fa-repeat"></i>';
-            }
-        }
-    );
-
-    favoriteBtn.addEventListener(
-        "click",
-        toggleFavorite
-    );
-
-    themeBtn.addEventListener(
-        "click",
-        toggleTheme
-    );
+function initializePlaylistManager() {
+    const createBtn = document.getElementById("createPlaylistBtn");
+    if (createBtn) {
+        createBtn.addEventListener("click", () => {
+            const name = prompt("Playlist name:");
+            if (!name || !name.trim()) return;
+            const id = StorageManager.createPlaylist(name.trim());
+            switchPlaylist(id);
+        });
+    }
 }
 
 function toggleFavorite() {
-
-    const song =
-        playlist[currentIndex];
-
-    if (
-        StorageManager
-            .isFavorite(
-                song.videoId
-            )
-    ) {
-
-        StorageManager
-            .removeFavorite(
-                song.videoId
-            );
-
+    if (!playlist.length) return;
+    const song = playlist[currentIndex];
+    if (StorageManager.isFavorite(song.videoId)) {
+        StorageManager.removeFavorite(song.videoId);
     } else {
-
-        StorageManager
-            .addFavorite(
-                song
-            );
+        StorageManager.addFavorite(song);
     }
-
     renderFavorites();
-
     updateFavoriteButton();
 }
 
 function updateFavoriteButton() {
-
-    const song =
-        playlist[currentIndex];
-
-    const btn =
-        document.getElementById(
-            "favoriteBtn"
-        );
-
-    const icon =
-        btn.querySelector("i");
-
-    if (
-        StorageManager
-            .isFavorite(
-                song.videoId
-            )
-    ) {
-
-        icon.className =
-            "fa-solid fa-heart";
-
-        btn.style.background =
-            "#ef4444";
-
-    } else {
-
-        icon.className =
-            "fa-regular fa-heart";
-
-        btn.style.background =
-            "var(--accent)";
-    }
+    if (!playlist.length) return;
+    const song = playlist[currentIndex];
+    const btn = document.getElementById("favoriteBtn");
+    const isFav = StorageManager.isFavorite(song.videoId);
+    btn.innerHTML = isFav
+        ? '<i class="fa-solid fa-heart"></i>'
+        : '<i class="fa-regular fa-heart"></i>';
+    btn.classList.toggle("fav-active", isFav);
+    btn.title = isFav ? "Remove from Favorites" : "Add to Favorites";
 }
 
 function toggleTheme() {
-
-    document.body
-        .classList.toggle(
-            "light"
-        );
-
-    const currentTheme =
-        document.body
-            .classList.contains(
-                "light"
-            )
-            ? "light"
-            : "dark";
-
-    StorageManager
-        .saveTheme(
-            currentTheme
-        );
+    document.body.classList.toggle("light");
+    const currentTheme = document.body.classList.contains("light") ? "light" : "dark";
+    StorageManager.saveTheme(currentTheme);
+    updateThemeIcon();
 }

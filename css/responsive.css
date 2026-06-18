@@ -1,71 +1,42 @@
-@media(max-width:1024px){
-
-    .sidebar{
-        width:260px;
-    }
-
-    .player-card img{
-        width:260px;
-        height:260px;
-    }
+@media (max-width: 1024px) {
+    .sidebar { width: 260px; }
+    .cover-wrapper img { width: 240px; height: 240px; }
 }
 
-@media(max-width:768px){
+@media (max-width: 768px) {
+    .container { flex-direction: column; }
 
-    .container{
-        flex-direction:column;
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        max-height: 40vh;
+        overflow-y: auto;
     }
 
-    .sidebar{
-        width:100%;
-        border-right:none;
-        border-bottom:1px solid #334155;
-    }
+    .header { flex-wrap: wrap; gap: 12px; padding: 14px 16px; }
 
-    .header{
-        flex-direction:column;
-        gap:15px;
-    }
+    .search-box { max-width: 100%; flex: 1 1 100%; margin: 0; order: 3; }
 
-    .search-box input{
-        width:100%;
-    }
+    .player-container { padding: 16px; }
 
-    .player-card{
-        padding:20px;
-    }
+    .player-card { padding: 20px 16px; }
 
-    .player-card img{
-        width:220px;
-        height:220px;
-    }
+    .cover-wrapper img { width: 200px; height: 200px; }
 
-    .controls{
-        flex-wrap:wrap;
-    }
+    .controls { gap: 8px; flex-wrap: wrap; }
 
-    .volume-wrapper input{
-        width:150px;
-    }
+    .volume-wrapper input { width: 140px; }
 }
 
-@media(max-width:480px){
+@media (max-width: 480px) {
+    .cover-wrapper img { width: 160px; height: 160px; }
 
-    .progress-wrapper{
-        flex-direction:column;
-    }
+    .controls button { width: 42px; height: 42px; font-size: 14px; }
+    .play-btn-main { width: 54px !important; height: 54px !important; }
 
-    .controls button{
-        width:48px;
-        height:48px;
-    }
+    .song-info h2 { font-size: 1rem; }
 
-    .player-card img{
-        width:180px;
-        height:180px;
-    }
-
-    .song-info h2{
-        font-size:1.2rem;
-    }
+    .progress-wrapper { flex-wrap: wrap; }
+    .progress-wrapper input { flex: 1 1 100%; order: -1; }
 }

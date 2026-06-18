@@ -3,33 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Music Player</title>
-
+    <title>YT Music Player</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
-
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    >
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
 
 <header class="header">
-
     <div class="logo">
         <i class="fa-solid fa-music"></i>
-        <h2>YT Music Player</h2>
+        <h2>YT Music</h2>
     </div>
 
     <div class="search-box">
-        <input
-            type="text"
-            id="searchInput"
-            placeholder="Search playlist..."
-        >
+        <button id="searchTypeToggle" title="Switch to YouTube search" class="search-mode-btn">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+        <input type="text" id="searchInput" placeholder="Search playlist...">
     </div>
 
     <div class="header-actions">
@@ -37,157 +29,95 @@
             <i class="fa-solid fa-moon"></i>
         </button>
     </div>
-
 </header>
 
 <div class="container">
 
     <aside class="sidebar">
 
-        <section class="playlist-section">
-
+        <section class="playlists-nav-section">
             <div class="section-title">
-                <h3>Playlist</h3>
+                <h3><i class="fa-solid fa-layer-group"></i> Playlists</h3>
+                <button id="createPlaylistBtn" title="New playlist" class="icon-action-btn">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
             </div>
+            <div id="playlistsNav"></div>
+        </section>
 
+        <section class="playlist-section">
+            <div class="section-title">
+                <h3 id="currentPlaylistLabel"><i class="fa-solid fa-music"></i> Songs</h3>
+            </div>
             <ul id="playlist"></ul>
-
         </section>
 
         <section class="favorites-section">
-
             <div class="section-title">
-                <h3>Favorites</h3>
+                <h3><i class="fa-solid fa-heart"></i> Favorites</h3>
             </div>
-
             <ul id="favoritesList"></ul>
-
         </section>
 
         <section class="recent-section">
-
             <div class="section-title">
-                <h3>Recently Played</h3>
+                <h3><i class="fa-solid fa-clock-rotate-left"></i> Recently Played</h3>
             </div>
-
             <ul id="recentList"></ul>
-
         </section>
 
     </aside>
 
     <main class="player-container">
-
         <div class="player-card">
 
-            <img
-                id="coverImage"
-                src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800"
-                alt="Cover"
-            >
+            <div class="cover-wrapper">
+                <img id="coverImage"
+                    src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800"
+                    alt="Cover">
+                <div class="cover-overlay"></div>
+            </div>
 
             <div class="song-info">
-
-                <h2 id="songTitle">
-                    Song Title
-                </h2>
-
-                <p id="artistName">
-                    Artist Name
-                </p>
-
+                <h2 id="songTitle">Song Title</h2>
+                <p id="artistName">Artist Name</p>
             </div>
 
             <div id="player"></div>
 
-            <!-- Controls -->
-
             <div class="controls">
-
-                <button
-                    id="shuffleBtn"
-                    title="Shuffle Songs"
-                    aria-label="Shuffle Songs">
+                <button id="shuffleBtn" title="Shuffle: Off" aria-label="Shuffle">
                     <i class="fa-solid fa-shuffle"></i>
                 </button>
-
-                <button
-                    id="prevBtn"
-                    title="Previous Song"
-                    aria-label="Previous Song">
-                    <i class="fa-solid fa-backward"></i>
+                <button id="prevBtn" title="Previous" aria-label="Previous">
+                    <i class="fa-solid fa-backward-step"></i>
                 </button>
-
-                <button
-                    id="playBtn"
-                    title="Play / Pause"
-                    aria-label="Play or Pause">
+                <button id="playBtn" title="Play / Pause" aria-label="Play or Pause" class="play-btn-main">
                     <i class="fa-solid fa-play"></i>
                 </button>
-
-                <button
-                    id="nextBtn"
-                    title="Next Song"
-                    aria-label="Next Song">
-                    <i class="fa-solid fa-forward"></i>
+                <button id="nextBtn" title="Next" aria-label="Next">
+                    <i class="fa-solid fa-forward-step"></i>
                 </button>
-
-                <button
-                    id="repeatBtn"
-                    title="Repeat Mode"
-                    aria-label="Repeat Mode">
+                <button id="repeatBtn" title="Repeat: Off" aria-label="Repeat">
                     <i class="fa-solid fa-repeat"></i>
                 </button>
-
-                <button
-                    id="favoriteBtn"
-                    title="Add to Favorites"
-                    aria-label="Add to Favorites">
-                    <i class="fa-solid fa-heart"></i>
+                <button id="favoriteBtn" title="Add to Favorites" aria-label="Favorite">
+                    <i class="fa-regular fa-heart"></i>
                 </button>
-
             </div>
-
-            <!-- Progress -->
 
             <div class="progress-wrapper">
-
-                <span id="currentTime">
-                    0:00
-                </span>
-
-                <input
-                    type="range"
-                    id="progressBar"
-                    value="0"
-                    min="0"
-                    max="100"
-                >
-
-                <span id="duration">
-                    0:00
-                </span>
-
+                <span id="currentTime">0:00</span>
+                <input type="range" id="progressBar" value="0" min="0" max="100">
+                <span id="duration">0:00</span>
             </div>
 
-            <!-- Volume -->
-
             <div class="volume-wrapper">
-
                 <i class="fa-solid fa-volume-high"></i>
-
-                <input
-                    type="range"
-                    id="volumeSlider"
-                    min="0"
-                    max="100"
-                    value="50"
-                >
-
+                <input type="range" id="volumeSlider" min="0" max="100" value="50">
             </div>
 
         </div>
-
     </main>
 
 </div>
