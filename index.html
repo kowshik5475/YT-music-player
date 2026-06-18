@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Player</title>
+    <title>YT Music Player</title>
     <!-- DNS pre-connect for faster external resource loading -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://images.unsplash.com">
@@ -37,7 +37,7 @@
         </button>
         <div class="logo">
             <i class="fa-solid fa-music"></i>
-            <h2>K Music</h2>
+            <h2>YT Music</h2>
         </div>
     </div>
 
@@ -99,6 +99,9 @@
             <div class="tab-panel" id="tab-songs">
                 <div class="panel-header">
                     <span class="panel-title">Library <span id="libCountBadge" class="count-badge">0</span></span>
+                    <button id="addSongBtn" class="icon-action-btn" title="Add song to library">
+                        <i class="fa-solid fa-plus"></i> Add
+                    </button>
                 </div>
                 <ul id="libraryList"></ul>
             </div>
@@ -211,6 +214,95 @@
             <button class="btn-primary" id="confirmCreatePlaylist">
                 <i class="fa-solid fa-plus"></i> Create Playlist
             </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- ── ADD SONG MODAL ── -->
+<div class="modal-overlay" id="addSongModal" aria-hidden="true">
+    <div class="modal-box" role="dialog" aria-label="Add Song to Library">
+
+        <div class="modal-header">
+            <div class="modal-icon"><i class="fa-solid fa-music"></i></div>
+            <div>
+                <h3 class="modal-title">Add to Library</h3>
+                <p class="modal-subtitle">Paste a YouTube link or enter details manually</p>
+            </div>
+            <button class="modal-close-btn" id="closeAddSongModal" title="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Source tabs -->
+        <div class="add-song-tabs">
+            <button class="add-song-tab active" data-source="url">
+                <i class="fa-brands fa-youtube"></i> YouTube URL
+            </button>
+            <button class="add-song-tab" data-source="manual">
+                <i class="fa-solid fa-pen"></i> Manual Entry
+            </button>
+        </div>
+
+        <!-- YouTube URL panel -->
+        <div class="add-song-panel active" id="panel-url">
+            <div class="modal-body">
+                <div class="modal-field">
+                    <label for="ytUrlInput">YouTube URL or Video ID <span class="required">*</span></label>
+                    <div class="url-input-row">
+                        <input type="text" id="ytUrlInput" placeholder="https://youtube.com/watch?v=… or video ID" autocomplete="off">
+                        <button class="btn-fetch" id="fetchInfoBtn">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+                    <span class="field-hint" id="ytUrlHint"></span>
+                </div>
+
+                <!-- Preview card (hidden until fetch) -->
+                <div class="song-preview" id="songPreview" style="display:none">
+                    <img id="previewThumb" src="" alt="" class="preview-thumb">
+                    <div class="preview-info">
+                        <div class="preview-title" id="previewTitle"></div>
+                        <div class="preview-artist" id="previewArtist"></div>
+                        <div class="preview-vid" id="previewVid"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelAddSong">Cancel</button>
+                <button class="btn-primary" id="confirmAddSong" disabled>
+                    <i class="fa-solid fa-plus"></i> Add to Library
+                </button>
+            </div>
+        </div>
+
+        <!-- Manual entry panel -->
+        <div class="add-song-panel" id="panel-manual">
+            <div class="modal-body">
+                <div class="modal-field">
+                    <label for="manualTitle">Song title <span class="required">*</span></label>
+                    <input type="text" id="manualTitle" placeholder="e.g. Bohemian Rhapsody" maxlength="120" autocomplete="off">
+                </div>
+                <div class="modal-field">
+                    <label for="manualArtist">Artist <span class="required">*</span></label>
+                    <input type="text" id="manualArtist" placeholder="e.g. Queen" maxlength="100" autocomplete="off">
+                </div>
+                <div class="modal-field">
+                    <label for="manualVideoId">YouTube Video ID <span class="required">*</span></label>
+                    <input type="text" id="manualVideoId" placeholder="e.g. fJ9rUzIMcZQ  (11 characters)" maxlength="20" autocomplete="off">
+                    <span class="field-hint" id="manualHint"></span>
+                </div>
+                <div class="modal-field">
+                    <label for="manualCover">Cover image URL <span class="optional">(optional)</span></label>
+                    <input type="text" id="manualCover" placeholder="https://… (leave blank to use YouTube thumbnail)">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelAddSongManual">Cancel</button>
+                <button class="btn-primary" id="confirmAddSongManual">
+                    <i class="fa-solid fa-plus"></i> Add to Library
+                </button>
+            </div>
         </div>
 
     </div>

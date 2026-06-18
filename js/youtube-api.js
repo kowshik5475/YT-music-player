@@ -53,3 +53,50 @@ function getBestThumbnail(thumbnails) {
     if (url.startsWith("//")) url = "https:" + url;
     return url || fallback;
 }
+
+// ── Parse a YouTube URL / short URL / plain video ID into a videoId string ──
+function parseYouTubeId(input) {
+    if (!input) return null;
+    input = input.trim();
+    // Plain video ID (11 chars: letters, digits, - _)
+    if (/^[A-Za-z0-9_-]{11}$/.test(input)) return input;
+    try {
+        const url = new URL(input.includes("://") ? input : "https://" + input);
+        // youtu.be/ID
+        if (url.hostname === "youtu.be") return url.pathname.slice(1).split(/[?&]/)[0] || null;
+        // youtube.com/shorts/ID  or  /embed/ID  or  /v/ID
+        const pathMatch = url.pathname.match(/\/(shorts|embed|v)\/([A-Za-z0-9_-]{11})/);
+        if (pathMatch) return pathMatch[2];
+        // youtube.com/watch?v=ID
+        const v = url.searchParams.get("v");
+        if (v && /^[A-Za-z0-9_-]{11}$/.test(v)) return v;
+    } catch (_) { /* not a valid URL */ }
+    return null;
+}
+
+// ── Fetch metadata for a single video from Invidious ──────────────────────
+async function fetchVideoById(videoId) {
+    const fields = "title,author,videoThumbnails";
+    for (const instance of INVIDIOUS_INSTANCES) {
+        try {
+            const url = `${instance}/api/v1/videos/${videoId}?fields=${fields}`;
+            const res = await fetchWithTimeout(url, 7000);
+            if (!res.ok) continue;
+            const data = await res.json();
+            if (!data || !data.title) continue;
+            return {
+                videoId,
+                title:  data.title  || "Unknown Title",
+                artist: data.author || "Unknown Artist",
+                cover:  getBestThumbnail(data.videoThumbnails)
+            };
+        } catch (_) { /* try next */ }
+    }
+    // Fallback: use YouTube thumbnail directly (always works) + no metadata
+    return {
+        videoId,
+        title:  "Unknown Title",
+        artist: "Unknown Artist",
+        cover:  `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`
+    };
+}
