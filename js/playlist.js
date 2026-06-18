@@ -1,14 +1,22 @@
 // playlist.js
 
-let playlist = [];
-let currentIndex = 0;
+// Initialize playlist immediately from storage so it's ready before
+// onYouTubeIframeAPIReady fires (no async dependency on loadActivePlaylist)
 let activePlaylistId = StorageManager.getActivePlaylistId();
+let _activePL = StorageManager.getActivePlaylist();
+let playlist = _activePL ? [...(_activePL.songs || [])] : [];
+let currentIndex = 0;
 
 function loadActivePlaylist() {
-    const pl = StorageManager.getActivePlaylist();
-    activePlaylistId = pl.id;
-    playlist = [...pl.songs];
-    currentIndex = 0;
+    try {
+        const pl = StorageManager.getActivePlaylist();
+        if (!pl) return;
+        activePlaylistId = pl.id;
+        playlist = [...(pl.songs || [])];
+        currentIndex = 0;
+    } catch (e) {
+        console.error("loadActivePlaylist error:", e);
+    }
 }
 
 function renderSidebarPlaylists() {
@@ -21,7 +29,7 @@ function renderSidebarPlaylists() {
         const item = document.createElement("div");
         item.className = "playlist-nav-item" + (pl.id === activeId ? " active" : "");
         item.innerHTML = `
-            <span class="pl-name"><i class="fa-solid fa-list-music"></i> ${escapeHtml(pl.name)}</span>
+            <span class="pl-name"><i class="fa-solid fa-music"></i> ${escapeHtml(pl.name)}</span>
             <div class="pl-actions">
                 ${pl.id !== "default" ? `<button class="pl-del-btn" title="Delete playlist" data-id="${pl.id}"><i class="fa-solid fa-trash"></i></button>` : ""}
             </div>
@@ -85,12 +93,16 @@ function removeSongFromCurrentPlaylist(videoId) {
     const wasPlaying = playlist[currentIndex] && playlist[currentIndex].videoId === videoId;
     StorageManager.removeSongFromPlaylist(activePlaylistId, videoId);
     loadActivePlaylist();
-    if (wasPlaying && playlist.length > 0) {
-        if (currentIndex >= playlist.length) currentIndex = 0;
-        loadSong(currentIndex);
-    } else if (playlist.length === 0) {
-        document.getElementById("songTitle").textContent = "No songs";
-        document.getElementById("artistName").textContent = "";
+    if (wasPlaying) {
+        if (playlist.length > 0) {
+            if (currentIndex >= playlist.length) currentIndex = playlist.length - 1;
+            loadSong(currentIndex);
+        } else {
+            document.getElementById("songTitle").textContent = "No songs";
+            document.getElementById("artistName").textContent = "";
+            document.getElementById("coverImage").src = "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800";
+            if (typeof player !== "undefined" && player && player.stopVideo) player.stopVideo();
+        }
     }
     renderPlaylist();
 }
@@ -115,12 +127,13 @@ function renderFavorites() {
                     <small>${escapeHtml(song.artist)}</small>
                 </div>
             </div>
-            <button class="remove-song-btn" title="Remove from favorites" data-videoid="${song.videoId}"><i class="fa-solid fa-heart-crack"></i></button>
+            <button class="remove-song-btn fav-remove" title="Remove from favorites"><i class="fa-solid fa-heart-crack"></i></button>
         `;
         li.querySelector(".song-item-info").addEventListener("click", () => {
             const idx = playlist.findIndex(s => s.videoId === song.videoId);
-            if (idx !== -1) loadSong(idx);
-            else {
+            if (idx !== -1) {
+                loadSong(idx);
+            } else {
                 StorageManager.addSongToPlaylist(activePlaylistId, song);
                 loadActivePlaylist();
                 const newIdx = playlist.findIndex(s => s.videoId === song.videoId);
@@ -161,8 +174,9 @@ function renderRecentSongs() {
         `;
         li.querySelector(".song-item-info").addEventListener("click", () => {
             const idx = playlist.findIndex(s => s.videoId === song.videoId);
-            if (idx !== -1) loadSong(idx);
-            else {
+            if (idx !== -1) {
+                loadSong(idx);
+            } else {
                 StorageManager.addSongToPlaylist(activePlaylistId, song);
                 loadActivePlaylist();
                 const newIdx = playlist.findIndex(s => s.videoId === song.videoId);
@@ -183,5 +197,9 @@ function renderAll() {
 
 function escapeHtml(str) {
     if (!str) return "";
-    return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
 }
