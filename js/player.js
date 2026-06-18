@@ -4,15 +4,21 @@ let player;
 let shuffleMode = StorageManager.getShuffleMode();
 let repeatMode  = StorageManager.getRepeatMode();
 
-function onYouTubeIframeAPIReady() {
+window.onYouTubeIframeAPIReady = function ()  {
+    console.log("YouTube API Ready");
     // playlist is already initialised in playlist.js at parse time
     if (!playlist.length) {
         // fallback: try to reload from storage in case something went wrong
-        loadActivePlaylist();
+        loadActivePlaylist?.();
     }
-    if (!playlist.length) return; // genuinely empty — nothing to play
+    console.log("Playlist length:", playlist.length);
+    if (!playlist.length) {
+        console.error("No songs found in playlist");
+        return;
+    }
+ // genuinely empty — nothing to play
 
-    try {
+    
         player = new YT.Player("player", {
             height: "200",
             width: "200",
@@ -31,10 +37,8 @@ function onYouTubeIframeAPIReady() {
                 onError: onPlayerError
             }
         });
-    } catch (e) {
-        console.error("YT.Player init error:", e);
-    }
-}
+    }; 
+
 
 function onPlayerReady() {
     renderAll();
@@ -151,8 +155,18 @@ function previousSong() {
 }
 
 function togglePlay() {
-    if (!player || typeof player.getPlayerState !== "function") return;
+
+    console.log("Play button clicked");
+
+    if (!player) {
+        console.error("Player not initialized");
+        return;
+    }
+
     const state = player.getPlayerState();
+
+    console.log("Current state:", state);
+
     if (state === YT.PlayerState.PLAYING) {
         player.pauseVideo();
     } else {
